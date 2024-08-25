@@ -6,6 +6,11 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
+
+async function getData(userId: string, siteId: string) {
+    
+}
+
 const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
 
   const { getUser } = getKindeServerSession();
@@ -26,13 +31,13 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
           </Link>
         </Button>
         <Button asChild variant="secondary">
-          <Link href={"#"}>
+          <Link href={`/dashboard/sites/${params.siteId}/settings`}>
             <Settings className="size-4 mr-2" />
             Settings
           </Link>
         </Button>
         <Button asChild>
-          <Link href={"#"}>
+          <Link href={`/dashboard/sites/${params.siteId}/create`}>
             <PlusCircle className="size-4 mr-2" />
             Create Article
           </Link>
