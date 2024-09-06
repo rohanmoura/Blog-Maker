@@ -1,19 +1,61 @@
-import EmptyState from '@/app/components/dashboard/EmptyState';
-import prisma from '@/app/utils/db';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { Book, MoreHorizontal, PlusCircle, Settings } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import React from 'react'
-
+import EmptyState from "@/app/components/dashboard/EmptyState";
+import prisma from "@/app/utils/db";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import {
+  Book,
+  FileIcon,
+  MoreHorizontal,
+  PlusCircle,
+  Settings,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 async function getData(userId: string, siteId: string) {
+  /* const data = await prisma.post.findMany({
+    where: {
+      id: siteId,
+      userId: userId,
+    },
+    select: {
+      image: true,
+      title: true,
+      createdAt: true,
+      id: true,
+      Site: {
+        select: {
+          subdirectory: true,
+        },
+      },
+    },
+  }); */
+
   const data = await prisma.site.findUnique({
     where: {
       id: siteId,
@@ -38,8 +80,11 @@ async function getData(userId: string, siteId: string) {
   return data;
 }
 
-const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
-
+export default async function SiteIdRoute({
+  params,
+}: {
+  params: { siteId: string };
+}) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
@@ -52,9 +97,9 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
   return (
     <>
       <div className="flex w-full justify-end gap-x-4">
-        <Button asChild variant={"secondary"}>
+        <Button asChild variant="secondary">
           <Link href={`/blog/${data?.subdirectory}`}>
-            <Book className='size-4 mr-2' />
+            <Book className="size-4 mr-2" />
             View Blog
           </Link>
         </Button>
@@ -71,6 +116,7 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
           </Link>
         </Button>
       </div>
+
       {data?.Post === undefined || data.Post.length === 0 ? (
         <EmptyState
           title="You dont have any Articles created"
@@ -102,17 +148,22 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
                   {data.Post.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>
-                        <Image src={item.image} width={64}
+                        <Image
+                          src={item.image}
+                          width={64}
                           height={64}
                           alt="Article Cover Image"
-                          className="size-16 rounded-md object-cover" />
+                          className="size-16 rounded-md object-cover"
+                        />
                       </TableCell>
                       <TableCell className="font-medium">
                         {item.title}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline"
-                          className="bg-green-500/10 text-green-500">
+                        <Badge
+                          variant="outline"
+                          className="bg-green-500/10 text-green-500"
+                        >
                           Published
                         </Badge>
                       </TableCell>
@@ -121,20 +172,21 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
                           dateStyle: "medium",
                         }).format(item.createdAt)}
                       </TableCell>
+
                       <TableCell className="text-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button size={"icon"} variant={"ghost"}>
-                              <MoreHorizontal className='size-4' />
+                            <Button size="icon" variant="ghost">
+                              <MoreHorizontal className="size-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>
-                              Actions
-                            </DropdownMenuLabel>
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                              <Link href={`/dashboard/sites/${params.siteId}/${item.id}`}>
+                              <Link
+                                href={`/dashboard/sites/${params.siteId}/${item.id}`}
+                              >
                                 Edit
                               </Link>
                             </DropdownMenuItem>
@@ -156,9 +208,6 @@ const SiteId: React.FC<{ params: { siteId: string } }> = async ({ params }) => {
           </Card>
         </div>
       )}
-
     </>
-  )
+  );
 }
-
-export default SiteId
